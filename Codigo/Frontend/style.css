@@ -6,14 +6,15 @@
   --primary: #2563eb;
   --primary-600: #1d4ed8;
   --danger: #dc2626;
-  --ok: #16a34a;
-  --warn: #f59e0b;
-  --info: #3b82f6;
-  --note: #8b5cf6;
   --radius: 16px;
   --shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-  --ring: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  --ring: 0 0 0 3px rgba(37, 99, 235, 0.15); /* Tamanhos da NAV */
+  --nav-font-mobile: 15px;
+  --nav-font-desktop: 17px;
+  --nav-gap: 12px;
 }
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
 * {
   box-sizing: border-box;
@@ -24,64 +25,78 @@ body {
 }
 body {
   margin: 0;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
-    Arial, "Noto Sans", sans-serif;
+  font-family: "Roboto", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Arial, "Noto Sans", sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.45;
-}
-
-/* Topo + pills */
+  font-weight: 400; /* tipografia leve */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} /* =================== Topbar =================== */ /* Grid: [logo auto] | [nav 1fr] */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 10;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 24px;
+  min-height: 80px; /* comporta pills/ logo maiores */
   background: #eceff4;
   border-bottom: 1px solid #e5e7eb;
-  padding: 8px 10px;
+} /* Logo (imagem dentro de .brand) */
+.brand {
+  flex: 0 0 auto;
+  height: clamp(56px, 8vw, 88px); /* ajuste aqui se quiser ainda maior */
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
 }
-.brand {
-  font-weight: 800;
-}
+.brand img {
+  display: block;
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  max-width: none;
+} /* NAV: ocupa o resto da linha; quebra quando precisar */
 .nav {
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
-  justify-content: center;
-}
+  gap: var(--nav-gap);
+  justify-content: flex-start;
+  align-content: center;
+} /* Pills grandes */
 .pill {
   border: none;
+  cursor: pointer;
   background: #e5e7eb;
   color: #374151;
   border-radius: 999px;
-  padding: 8px 12px;
-  cursor: pointer;
+  padding: 12px 16px; /* ↑ mais “encorpado” */
+  font-size: var(--nav-font-mobile);
+  line-height: 1.1;
+  font-weight: 500; /* leve */
 }
 .pill:hover {
   filter: brightness(0.97);
 }
-.pill-red {
-  background: #ef4444;
+.pill.active {
+  background: var(--primary);
   color: #fff;
 }
-.spacer {
-  flex: 1;
-}
-.admin-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-/* Container */
+@media (min-width: 900px) {
+  .pill {
+    font-size: var(--nav-font-desktop);
+    padding: 13px 18px;
+  }
+  .nav {
+    gap: calc(var(--nav-gap) + 2px);
+  }
+} /* =================== Layout base =================== */
 .container {
   width: min(980px, 100%);
-  margin: 14px auto 80px;
+  margin: 18px auto 80px;
   padding: 0 12px;
 }
 .foot {
@@ -89,57 +104,7 @@ body {
   justify-content: center;
   padding: 16px;
   color: var(--muted);
-}
-
-/* Painel Admin */
-.admin-panel {
-  width: min(980px, 100%);
-  margin: 14px auto;
-  padding: 16px;
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  display: none;
-}
-.admin-panel[aria-hidden="false"] {
-  display: block;
-}
-.grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-@media (min-width: 720px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.field input,
-.field select,
-.field textarea {
-  padding: 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  background: #fff;
-}
-.check {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.admin-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-/* Cards e perguntas (mobile-first empilhado) */
+} /* =================== Cards / Formulários =================== */
 .card {
   background: var(--card);
   border-radius: var(--radius);
@@ -150,7 +115,8 @@ body {
 .card h2,
 .card h3 {
   margin: 0 0 10px;
-}
+  font-weight: 500; /* títulos mais leves */
+} /* Perguntas empilhadas (mobile-first) */
 .question {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -164,7 +130,7 @@ body {
 }
 .question label {
   grid-column: 1 / -1;
-  font-weight: 600;
+  font-weight: 400 !important; /* <<< rótulos menos bold */
 }
 .question input,
 .question select,
@@ -175,11 +141,12 @@ body {
   border: 1px solid #e5e7eb;
   background: #fff;
   grid-column: 1 / -1;
+  font-weight: 400;
 }
 .question textarea {
   min-height: 96px;
   resize: vertical;
-}
+} /* Botão remover (quando houver modo admin no futuro) */
 .remove-btn {
   display: none;
   border: none;
@@ -196,9 +163,7 @@ body {
 }
 body.admin-on .remove-btn {
   display: inline-block;
-}
-
-/* Rodapé do formulário */
+} /* =================== Ações do formulário =================== */
 .form-actions {
   display: flex;
   justify-content: space-between;
@@ -210,7 +175,7 @@ body.admin-on .remove-btn {
   border-radius: 12px;
   border: 1px solid transparent;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
   box-shadow: var(--shadow);
   background: #fff;
 }
@@ -233,9 +198,7 @@ body.admin-on .remove-btn {
   background: transparent;
   color: var(--danger);
   border: 1px solid var(--danger);
-}
-
-/* Cards coloridos do relatório */
+} /* =================== Cards coloridos do relatório =================== */
 .color-info {
   box-shadow: var(--shadow);
   border: 2px solid var(--info);
@@ -251,9 +214,7 @@ body.admin-on .remove-btn {
 .color-note {
   box-shadow: var(--shadow);
   border: 2px solid var(--note);
-}
-
-/* Equipe */
+} /* =================== Equipe =================== */
 .team {
   display: grid;
   grid-template-columns: 1fr;
@@ -269,9 +230,7 @@ body.admin-on .remove-btn {
   grid-template-columns: 64px 1fr;
   gap: 12px;
   align-items: center;
-}
-
-/* Estrelas */
+} /* =================== Estrelas (feedback) =================== */
 .stars {
   display: flex;
   gap: 6px;
@@ -281,9 +240,7 @@ body.admin-on .remove-btn {
 }
 .star.on {
   color: #f59e0b;
-}
-
-/* Paleta da gema (1–16) */
+} /* =================== Paleta da gema (1–16) =================== */
 .yolk-palette {
   display: grid;
   grid-template-columns: repeat(8, minmax(34px, 1fr));
@@ -306,10 +263,10 @@ body.admin-on .remove-btn {
 .yolk-swatch:focus-visible {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
 }
-.yolk-swatch[data-selected="true"] {
+[data-selected="true"].yolk-swatch {
   border-color: #1d4ed8;
 }
-.yolk-swatch[data-selected="true"]::after {
+[data-selected="true"].yolk-swatch::after {
   content: "✓";
   position: absolute;
   right: 4px;
@@ -324,9 +281,7 @@ body.admin-on .remove-btn {
   color: #6b7280;
   font-size: 0.9rem;
   margin-top: 4px;
-}
-
-/* Utilidades */
+} /* =================== Utilidades =================== */
 .hidden {
   display: none !important;
 }
@@ -337,14 +292,128 @@ body.admin-on .remove-btn {
   font-size: 12px;
   background: #eef2ff;
   color: #3730a3;
-}
-
-/* Estado ativo da aba */
+  font-weight: 500;
+} /* Estado ativo da aba (garantia) */
 .pill.active {
-  background: var(--primary);
-  color: #fff;
+  background: var(--primary) !important;
+  color: #fff !important;
 }
 .pill:not(.active) {
   background: #e5e7eb;
   color: #374151;
+} /* ===== Logo maior sem alterar topbar/nav ===== */
+:root {
+  --brand-h: 56px; /* altura interna atual do topo para a logo */
+  --brand-w: 140px; /* largura “reservada” da área da logo (layout) */
+  --brand-scale: 2.5; /* quanto quer aumentar visualmente (1 = original) */
+} /* mantém a barra do mesmo tamanho que já está */
+.topbar {
+  min-height: var(--brand-h);
+} /* a .brand mantém a mesma área no layout (não empurra a nav) */
+.brand {
+  position: relative;
+  width: var(--brand-w);
+  height: var(--brand-h);
+  display: block;
+  overflow: visible; /* permite a logo “sair” um pouco da área */
+} /* a imagem é posicionada absoluta e escalada visualmente */
+.brand img {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  transform-origin: left center;
+  transform: translateY(-50%) scale(var(--brand-scale)); /* não deixa capturar cliques fora da área reservada, opcional */
+  pointer-events: none;
+}
+
+/* ===== Compactação no mobile (≤ 640px) ===== */
+@media (max-width: 640px) {
+  /* já some com a logo no mobile */
+  .brand {
+    display: none !important;
+  }
+
+  /* tipografia e espaçamentos gerais */
+  html {
+    font-size: 15px;
+  } /* base menor sem ficar minúsculo */
+  .topbar {
+    grid-template-columns: 1fr !important; /* só a nav */
+    padding: 10px 12px;
+    min-height: 56px;
+    gap: 10px;
+  }
+
+  /* NAV + pills mais compactas */
+  .nav {
+    gap: 8px;
+    justify-content: center;
+  }
+  .pill {
+    font-size: 14px !important;
+    padding: 8px 12px !important;
+    border-radius: 999px;
+    line-height: 1.1;
+  }
+
+  /* conteúdo com menos margem/padding */
+  .container {
+    margin: 12px auto 56px;
+    padding: 0 10px;
+  }
+
+  /* cards e títulos menores */
+  .card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+  .card h2,
+  .card h3 {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  /* perguntas mais “enxutas” */
+  .question {
+    gap: 6px;
+    padding: 8px 0;
+  }
+  .question label {
+    font-size: 0.92rem;
+  }
+  .question input,
+  .question select,
+  .question textarea {
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+  }
+
+  /* paleta da gema menor e com menos colunas */
+  .yolk-palette {
+    grid-template-columns: repeat(6, minmax(28px, 1fr));
+    gap: 6px;
+  }
+  .yolk-legend {
+    font-size: 0.85rem;
+  }
+
+  /* botões do rodapé menores */
+  .form-actions {
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .btn {
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+  }
+
+  /* estrelas ligeiramente menores */
+  .stars {
+    font-size: 24px;
+  }
 }

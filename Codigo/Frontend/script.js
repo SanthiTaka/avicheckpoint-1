@@ -1,3 +1,10 @@
+// >>> troque aqui para o caminho do seu PDF
+// Caminho relativo para o PDF (mesma pasta do index.html)
+const PDF_URL = "./Cartilha-Avicheckpoint.pdf";
+
+// exemplo de caminhos possíveis:
+// "docs/cartilha.pdf"  |  "/assets/pdfs/cartilha.pdf"  |  "https://meusite.com/arq.pdf"
+
 const UF_LIST = [
   "AC",
   "AL",
@@ -364,14 +371,12 @@ function saveProducer() {
     uf: get("p_uf"),
     cidade: get("p_cidade"),
   };
-  if (!validatePassword(produtor.senha)) {
-    alert("Senha inválida: mínimo 8, com maiúscula, minúscula e símbolo.");
-    return;
-  }
-  if (!produtor.nome || !produtor.email || !produtor.uf || !produtor.cidade) {
-    alert("Preencha os campos obrigatórios.");
-    return;
-  }
+  if (!validatePassword(produtor.senha))
+    return alert(
+      "Senha inválida: mínimo 8, com maiúscula, minúscula e símbolo."
+    );
+  if (!produtor.nome || !produtor.email || !produtor.uf || !produtor.cidade)
+    return alert("Preencha os campos obrigatórios.");
   localStorage.setItem("produtor", JSON.stringify(produtor));
   localStorage.setItem("ufProd", produtor.uf);
   alert(
@@ -396,7 +401,6 @@ function saveProfessional() {
     );
   if (!prof.nome || !prof.email || !prof.uf || !prof.cidade || !prof.formacao)
     return alert("Preencha os campos obrigatórios.");
-  // demo: empilha no localStorage (substituir por API POST /profissionais)
   const list = JSON.parse(localStorage.getItem("profissionais") || "[]");
   list.push({ ...prof, id: Date.now() });
   localStorage.setItem("profissionais", JSON.stringify(list));
@@ -436,9 +440,8 @@ function makeControl({
   lab.textContent = rotulo;
 
   let el;
-
   switch (tipo) {
-    case "number": {
+    case "number":
       el = document.createElement("input");
       el.type = "number";
       el.id = id;
@@ -446,34 +449,29 @@ function makeControl({
       el.inputMode = "numeric";
       if (step) el.step = step;
       break;
-    }
-    case "text": {
+    case "text":
       el = document.createElement("input");
       el.type = "text";
       el.id = id;
       el.placeholder = placeholder || "";
       break;
-    }
-    case "textarea": {
+    case "textarea":
       el = document.createElement("textarea");
       el.id = id;
       el.placeholder = placeholder || "";
       break;
-    }
-    case "yesno": {
+    case "yesno":
       el = document.createElement("select");
       el.id = id;
       el.append(new Option("Selecione", "", true, true));
       ["Sim", "Não"].forEach((v) => el.append(new Option(v, v)));
       break;
-    }
-    case "select": {
+    case "select":
       el = document.createElement("select");
       el.id = id;
       el.append(new Option("Selecione", "", true, true));
       (opcoes || []).forEach((o) => el.append(new Option(o, o)));
       break;
-    }
     case "yolk": {
       const yolkHex = [
         "#f0d78b",
@@ -497,11 +495,9 @@ function makeControl({
       palette.className = "yolk-palette";
       palette.setAttribute("role", "radiogroup");
       palette.setAttribute("aria-label", "Coloração da gema (1 a 16)");
-
       const hidden = document.createElement("input");
       hidden.type = "hidden";
       hidden.id = id;
-
       let selectedIndex = null;
       const selectIndex = (idx) => {
         selectedIndex = idx;
@@ -512,7 +508,6 @@ function makeControl({
         valuesState[currentTab] ??= {};
         valuesState[currentTab][id] = String(idx);
       };
-
       yolkHex.forEach((hex, i) => {
         const btn = document.createElement("button");
         btn.type = "button";
@@ -524,27 +519,23 @@ function makeControl({
         btn.addEventListener("click", () => selectIndex(i + 1));
         palette.appendChild(btn);
       });
-
       const legend = document.createElement("div");
       legend.className = "yolk-legend";
       legend.textContent =
         "Selecione o tom mais próximo (1 = mais claro • 16 = mais escuro).";
-
       const prev = valuesState[currentTab]?.[id];
       if (prev) selectIndex(+prev);
-
       const frag = document.createDocumentFragment();
       frag.append(palette, hidden, legend);
       el = frag;
       break;
     }
-    default: {
+    default:
       el = document.createElement("select");
       el.id = id;
       el.append(new Option("Selecione", "", true, true));
       (opcoes || []).forEach((o) => el.append(new Option(o, o)));
       break;
-    }
   }
 
   if (required && el instanceof HTMLElement && "required" in el)
@@ -592,7 +583,6 @@ function render() {
       btn.addEventListener("click", saveProfessional);
       card.appendChild(btn);
     }
-
     page.appendChild(card);
   });
 }
@@ -612,7 +602,7 @@ function renderSobre() {
   team.innerHTML = `<h3>Equipe</h3>`;
   const wrap = document.createElement("div");
   wrap.className = "team";
-  const data = [
+  [
     {
       nome: "Dayse Helena Lages da Silva",
       cargo: "Médica veterinária, fundadora e orientadora dos materiais",
@@ -637,8 +627,7 @@ function renderSobre() {
       cargo:
         "Fundadora, estudante de Engenharia de Software e responsável pela parte tecnológica",
     },
-  ];
-  data.forEach((m) => {
+  ].forEach((m) => {
     const row = document.createElement("div");
     row.className = "member";
     row.innerHTML = `<div style="width:64px;height:64px;border-radius:50%;background:#e5e7eb;"></div>
@@ -683,18 +672,18 @@ function buildFindingsFromAnswers() {
     out.profissao = out.profissao || "Medicina veterinária";
   }
   if (s.s3 === "Sim") out.fortes.push("Vacinação em dia.");
-  if (s.s3 === "Não") {
+  else if (s.s3 === "Não") {
     out.melhorar.push("Vacinação não está em dia.");
     out.profissao = out.profissao || "Medicina veterinária";
   }
   if (s.s4 === "Sim") out.fortes.push("Quarentena aplicada para novas aves.");
-  if (s.s4 === "Não")
+  else if (s.s4 === "Não")
     out.melhorar.push("Implementar quarentena para novas aves.");
   if (s.s5 === "Sim") {
     out.melhorar.push("Contato com aves silvestres — risco sanitário.");
     out.profissao = out.profissao || "Medicina veterinária";
-  }
-  if (s.s5 === "Não") out.fortes.push("Acesso de aves silvestres restringido.");
+  } else if (s.s5 === "Não")
+    out.fortes.push("Acesso de aves silvestres restringido.");
 
   const n = valuesState.nutricao || {};
   if (n.n1 === "Ração industrial")
@@ -704,20 +693,20 @@ function buildFindingsFromAnswers() {
     out.profissao = out.profissao || "Zootecnia";
   }
   if (n.n2 === "Sim") out.fortes.push("Armazenamento adequado de ração.");
-  if (n.n2 === "Não")
+  else if (n.n2 === "Não")
     out.melhorar.push(
       "Melhorar armazenamento (local fechado, seco e protegido)."
     );
   if (n.n3 === "Sim")
     out.melhorar.push("Fungos/bolor/insetos na ração — revisar armazenamento.");
-  if (n.n3 === "Não") out.fortes.push("Ração sem sinais de contaminação.");
+  else if (n.n3 === "Não") out.fortes.push("Ração sem sinais de contaminação.");
 
   const a = valuesState.avaliacao || {};
   if (a.a1 === "Sim") out.fortes.push("Registros zootécnicos mantidos.");
-  if (a.a1 === "Não")
+  else if (a.a1 === "Não")
     out.melhorar.push("Implementar registros (produção, ração, mortalidade).");
   if (a.a2 === "Sim") out.fortes.push("Manejo de luz adequado (fotoperíodo).");
-  if (a.a2 === "Não") {
+  else if (a.a2 === "Não") {
     out.melhorar.push("Ajustar fotoperíodo (~16h luz).");
     out.profissao = out.profissao || "Medicina veterinária";
   }
@@ -737,7 +726,7 @@ function buildFindingsFromAnswers() {
   }
   if (a.a4 === "Sem alteração")
     out.fortes.push("Coleta correta (sem sujidades).");
-  if (a.a4 === "Presença de sujidades/fezes")
+  else if (a.a4 === "Presença de sujidades/fezes")
     out.melhorar.push(
       "Sujidades — aumentar frequência de coleta e higiene de ninhos."
     );
@@ -855,6 +844,7 @@ function renderResultado() {
   page.appendChild(wrap);
 }
 
+/* === AQUI: abre o PDF em outra aba === */
 function renderSabia() {
   const card = document.createElement("section");
   card.className = "card";
@@ -863,9 +853,12 @@ function renderSabia() {
     <ul>
       <li><strong>Manejo dos ovos:</strong> Evite lavar os ovos para não remover a película protetora.</li>
       <li><strong>Manejo da luz:</strong> Fotoperíodo adequado (≈16 horas de luz) melhora a postura.</li>
-      <li><strong>Influenza Aviária / Newcastle:</strong> quarentena e barreiras sanitárias reduzem riscos.</li>
+      <li><strong>Influenza Aviária / Newcastle:</strong> Quarentena e barreiras sanitárias reduzem riscos.</li>
     </ul>
-    <p>Cartilhas e materiais: <a href="https://www.canva.com/design/DAG0fxSOyyk/QHQvvvoiKL185X4W7G7I_A/" target="_blank" rel="noopener">ver conteúdo</a></p>
+    <p style="margin-top:10px">
+      Cartilhas e materiais:
+      <a href="${PDF_URL}" target="_blank" rel="noopener">Ver conteúdo</a>
+    </p>
   `;
   page.appendChild(card);
 }
@@ -874,7 +867,6 @@ function boot() {
   render();
   updateNavButtons();
   setActivePill(currentTab);
-
   document.addEventListener("input", (e) => {
     if (e.target.id === "p_senha" || e.target.id === "pr_senha") {
       const ok = validatePassword(e.target.value);

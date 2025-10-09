@@ -1,9 +1,8 @@
-// >>> troque aqui para o caminho do seu PDF
+// >>> troque aqui se mover o PDF
 // Caminho relativo para o PDF (mesma pasta do index.html)
 const PDF_URL = "./Cartilha-Avicheckpoint.pdf";
 
-// exemplo de caminhos possíveis:
-// "docs/cartilha.pdf"  |  "/assets/pdfs/cartilha.pdf"  |  "https://meusite.com/arq.pdf"
+// ---------------------------------------------
 
 const UF_LIST = [
   "AC",
@@ -328,7 +327,9 @@ const nextBtn = document.getElementById("nextBtn");
 document
   .querySelectorAll("#tabs .pill")
   .forEach((b) => b.addEventListener("click", () => goTo(b.dataset.tab)));
+
 const tabButtons = () => Array.from(document.querySelectorAll("#tabs .pill"));
+
 function setActivePill(tabKey) {
   tabButtons().forEach((b) =>
     b.classList.toggle("active", b.dataset.tab === tabKey)
@@ -540,7 +541,6 @@ function makeControl({
 
   if (required && el instanceof HTMLElement && "required" in el)
     el.required = true;
-
   if (["number", "text", "textarea", "yesno", "select"].includes(tipo)) {
     el.addEventListener?.("input", () => {
       valuesState[currentTab] ??= {};
@@ -587,6 +587,7 @@ function render() {
   });
 }
 
+/* ---------- Quem somos (com fotos quando houver) ---------- */
 function renderSobre() {
   const card = document.createElement("section");
   card.className = "card";
@@ -597,43 +598,83 @@ function renderSobre() {
   `;
   page.appendChild(card);
 
-  const team = document.createElement("section");
-  team.className = "card";
-  team.innerHTML = `<h3>Equipe</h3>`;
-  const wrap = document.createElement("div");
-  wrap.className = "team";
-  [
+  const TEAM_DATA = [
     {
       nome: "Dayse Helena Lages da Silva",
       cargo: "Médica veterinária, fundadora e orientadora dos materiais",
+      foto: "/Codigo/Frontend/foto-dayse.jpeg",
     },
     {
       nome: "Lorena Stephannie Martins Moreira",
       cargo:
         "Fundadora, estudante de Medicina Veterinária e desenvolvedora dos conteúdos teóricos",
+      foto: "/Codigo/Frontend/foto-Lorena.png",
     },
     {
       nome: "João Victor Félix Ribeiro",
       cargo:
         "Fundador, estudante de Medicina Veterinária e desenvolvedor dos conteúdos teóricos",
+      foto: "/Codigo/Frontend/foto-Joao.jpeg",
     },
     {
-      nome: "Sanhiag Takaesu",
+      nome: "Sanhiago Takaesu",
       cargo:
         "Fundador, estudante de Engenharia de Software e responsável pela parte tecnológica",
+      foto: "/Codigo/Frontend/foto - Santhi.jpeg",
     },
     {
       nome: "Brenda Evers",
       cargo:
         "Fundadora, estudante de Engenharia de Software e responsável pela parte tecnológica",
+      foto: "/Codigo/Frontend/foto-Brenda.jpeg",
     },
-  ].forEach((m) => {
+  ];
+
+  const team = document.createElement("section");
+  team.className = "card";
+  team.innerHTML = `<h3>Equipe</h3>`;
+
+  const wrap = document.createElement("div");
+  wrap.className = "team";
+
+  TEAM_DATA.forEach((m) => {
     const row = document.createElement("div");
     row.className = "member";
-    row.innerHTML = `<div style="width:64px;height:64px;border-radius:50%;background:#e5e7eb;"></div>
-    <div><div style="font-weight:700">${m.nome}</div><div style="color:var(--muted)">${m.cargo}</div></div>`;
+
+    const avatar = document.createElement("img");
+    avatar.className = "avatar";
+    avatar.alt = m.nome;
+    if (m.foto) {
+      avatar.src = m.foto;
+    } else {
+      // fallback SVG inline se não houver foto
+      avatar.src =
+        "data:image/svg+xml;utf8," +
+        encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="32" fill="#e5e7eb"/><circle cx="32" cy="24" r="12" fill="#cbd5e1"/><rect x="12" y="40" width="40" height="16" rx="8" fill="#cbd5e1"/></svg>`
+        );
+    }
+    avatar.style.width = "64px";
+    avatar.style.height = "64px";
+    avatar.style.borderRadius = "50%";
+    avatar.style.objectFit = "cover";
+    avatar.style.background = "#e5e7eb";
+    avatar.onerror = function () {
+      this.onerror = null;
+      this.src =
+        "data:image/svg+xml;utf8," +
+        encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="32" fill="#e5e7eb"/><circle cx="32" cy="24" r="12" fill="#cbd5e1"/><rect x="12" y="40" width="40" height="16" rx="8" fill="#cbd5e1"/></svg>`
+        );
+    };
+
+    const info = document.createElement("div");
+    info.innerHTML = `<div style="font-weight:600">${m.nome}</div><div style="color:var(--muted)">${m.cargo}</div>`;
+
+    row.append(avatar, info);
     wrap.appendChild(row);
   });
+
   team.appendChild(wrap);
   page.appendChild(team);
 }
@@ -844,7 +885,7 @@ function renderResultado() {
   page.appendChild(wrap);
 }
 
-/* === AQUI: abre o PDF em outra aba === */
+/* === “Você sabia?” — link abre o PDF em outra aba === */
 function renderSabia() {
   const card = document.createElement("section");
   card.className = "card";
@@ -867,6 +908,7 @@ function boot() {
   render();
   updateNavButtons();
   setActivePill(currentTab);
+
   document.addEventListener("input", (e) => {
     if (e.target.id === "p_senha" || e.target.id === "pr_senha") {
       const ok = validatePassword(e.target.value);

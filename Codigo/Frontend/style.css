@@ -416,4 +416,14 @@ body.admin-on .remove-btn {
   .stars {
     font-size: 24px;
   }
+
+  /* Grade da equipe já existe; só garantimos o avatar redondo */
+  .team .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e5e7eb;
+    display: block;
+  }
 }
